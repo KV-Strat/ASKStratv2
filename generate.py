@@ -217,17 +217,17 @@ def _fallback_benchmark(company: str, peers: List[str], caps: List[str]) -> Dict
 # ---------------------- Core Generator ----------------------
 
 @dataclass
-class StrategyGeneratorscope:
-    provider: Optional[LLMProvider] = None
+#class StrategyGeneratorscope:
+    #provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
     
-    def generate_scope(self, company: str -> Dict[str, List[str]]:
-        if self.provider:
-            out = self.provider.complete(_GEN_SYS, _compose_scope_prompt(company))
-                return out
+    #def generate_scope(self, company: str -> Dict[str, List[str]]:
+        #if self.provider:
+            #out = self.provider.complete(_GEN_SYS, _compose_scope_prompt(company))
+                #return out
         # fallback
-        return "builds and sells robots"
+        #return "builds and sells robots"
         
 class StrategyGenerator:
     provider: Optional[LLMProvider] = None

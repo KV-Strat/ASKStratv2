@@ -108,12 +108,12 @@ _GEN_SYS = (
     "No prose, no markdown, no backticks. Keep each list item short (<=18 words)."
 )
 
-def _scope_prompt(company: str) -> str:
-    return f"""
-Company: {company}
+#def _scope_prompt(company: str) -> str:
+    #return f"""
+#Company: {company}
 
-Produce a single sentence only which is text.
-""".strip()
+#Produce a single sentence only which is text.
+#""".strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""

@@ -211,7 +211,7 @@ if st.session_state.step == 0:
     # Offline test toggle (no OpenAI calls)
     state["offline_mode"] = st.checkbox(
         "Run without OpenAI (offline mock)",
-        value=state.get("offline_mode", True),
+        value=state.get("offline_mode", False),
         help="Use a local mock generator so you can test without API keys/costs."
     )
 

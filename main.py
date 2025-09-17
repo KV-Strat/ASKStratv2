@@ -24,7 +24,7 @@ except Exception:  # graceful dev-mode without the module
     StrategyGenerator = None  # type: ignore
     OpenAIProvider = None  # type: ignore
 
-APP_NAME = "ASK Strategy"
+APP_NAME = "ASK Strategy Lab"
 
 # -------------------- Page & Session Setup --------------------
 st.set_page_config(page_title=APP_NAME, layout="wide")
@@ -36,6 +36,7 @@ if "state" not in st.session_state:
     st.session_state.state = {
         "analysis_id": str(uuid.uuid4()),
         "company": "",
+        "scope": "",
         "product": "",
         "geo": None,
         "notes": None,
@@ -141,6 +142,7 @@ def on_generate_click():
         with st.spinner("Generating analysis…"):
             results = gen.generate_selected_frameworks(
                 company=state["company"],
+                scope=state["scope"],
                 product=state["product"],
                 frameworks=state["frameworks"],
                 notes=state.get("notes"),
@@ -165,6 +167,7 @@ st.progress((st.session_state.step + 1) / 5, text=f"Step {st.session_state.step 
 if st.session_state.step == 0:
     st.subheader("Inputs")
     state["company"] = st.text_input("Company *", state["company"], max_chars=80, placeholder="e.g., ACME Robotics")
+    state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")
     state["geo"] = st.selectbox("Geography (optional)", ["", "US", "EU", "APAC"], index=0)
     state["notes"] = st.text_area("Notes (optional)", value=state["notes"] or "", height=100)
@@ -179,8 +182,8 @@ if st.session_state.step == 0:
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Continue", type="primary", use_container_width=True):
-            if not state["company"].strip() or not state["product"].strip():
-                st.error("Company and Product are required.")
+            if not state["company"].strip() or not state["scope"].strip():
+                st.error("Company and Scope are required.")
             else:
                 st.session_state.step = 1
                 st.rerun()
@@ -311,6 +314,7 @@ elif st.session_state.step == 4:
         payload = {
             "analysis_id": state["analysis_id"],
             "company": state["company"],
+            "scope": state["scope"],
             "product": state["product"],
             "geo": state["geo"],
             "notes": state["notes"],
@@ -323,6 +327,7 @@ elif st.session_state.step == 4:
 
         # Filename pattern
         safe_company = (state["company"] or "company").replace(" ", "_")
+        safe_scope = (state["scope"] or "scope").replace(" ", "_")
         safe_product = (state["product"] or "product").replace(" ", "_")
         fname = f"{safe_company}_{safe_product}_{datetime.now().strftime('%Y%m%d')}_strategy.json"
 

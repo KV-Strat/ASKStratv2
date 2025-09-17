@@ -196,13 +196,13 @@ if st.session_state.step == 0:
             )
         except Exception as e:
             st.info(f"Scope auto-gen skipped: {e}")
-     # Scope input (shows generated value, but user can override)
-     state["scope"] = st.text_input(
+    # Scope input (shows generated value, but user can override)
+    state["scope"] = st.text_input(
         "Scope *",
         value=state.get("scope") or auto_scope or "Sells groceries",
         max_chars=80,
         placeholder="Sells groceries",
-     )   
+    ) 
     #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")
     state["geo"] = st.selectbox("Geography (optional)", ["", "US", "EU", "APAC"], index=0)

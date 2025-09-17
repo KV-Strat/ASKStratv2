@@ -167,7 +167,19 @@ st.progress((st.session_state.step + 1) / 5, text=f"Step {st.session_state.step 
 if st.session_state.step == 0:
     st.subheader("Inputs")
     state["company"] = st.text_input("Company *", state["company"], max_chars=80, placeholder="e.g., ACME Robotics")
-    state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.session_state.scope_lock_manual = st.toggle("Lock manual scope edits", value=st.session_state.scope_lock_manual,
+                                                   help="Prevents auto updates from overwriting your changes.")
+    with c2:
+        auto_refresh = st.toggle("Auto-generate on change", value=True)
+    st.session_state.scope = st.text_input(
+        "Scope *",
+        st.session_state.scope or generate_scope(company or None),
+        max_chars=80,
+        placeholder="e.g., Manufacturing",
+    )
+    #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")
     state["geo"] = st.selectbox("Geography (optional)", ["", "US", "EU", "APAC"], index=0)
     state["notes"] = st.text_area("Notes (optional)", value=state["notes"] or "", height=100)

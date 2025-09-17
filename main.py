@@ -181,7 +181,7 @@ if st.session_state.step == 0:
         auto_refresh = st.toggle("Auto-generate on change", value=True)
     state["scope"] = st.text_input(
         "Scope *",
-        value=state.get("scope") or default_scope,
+        value=state.get("scope") or "",
         max_chars=80,
         placeholder="e.g., Manufacturing",
     )

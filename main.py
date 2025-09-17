@@ -191,7 +191,6 @@ if st.session_state.step == 0:
             company=state.get("company") or "",       
             )
             out = self.provider.complete(_GEN_SCOPE, _scope_prompt(company))
-            )
         except TypeError as te:
             st.warning(f"Scope auto-gen skipped: {te}")
     state["scope"] = st.text_input(

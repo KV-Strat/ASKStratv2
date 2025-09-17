@@ -71,8 +71,8 @@ def _get_generator() -> "StrategyGenerator":
         )
         # Very small fallback shim
         class _MockGen:
-            def generate_scope(self, **kwargs):
-                return ""
+            #def generate_scope(self, **kwargs):
+            #    return ""
             def generate_selected_frameworks(self, **kwargs):
                 return {
                     "SWOT": {
@@ -189,13 +189,13 @@ if st.session_state.step == 0:
     # Auto-fill scope (only when allowed)
     auto_scope = ""
     if state["auto_refresh"] and not state["scope_lock_manual"]:
-        gen1 = _get_generator()
-        try:
-            auto_scope = gen1.generate_scope(
-            company=(state.get("company"))   # <-- only company
-            )
-        except Exception as e:
-            st.info(f"Scope auto-gen skipped: {e}")
+        #gen1 = _get_generator()
+        #try:
+            #auto_scope = gen1.generate_scope(
+            #company=(state.get("company"))   # <-- only company
+            #)
+        #except Exception as e:
+            #st.info(f"Scope auto-gen skipped: {e}")
     # Scope input (shows generated value, but user can override)
     state["scope"] = st.text_input(
         "Scope *",

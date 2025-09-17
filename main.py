@@ -24,7 +24,7 @@ except Exception:  # graceful dev-mode without the module
     StrategyGenerator = None  # type: ignore
     OpenAIProvider = None  # type: ignore
 
-APP_NAME = "ASK Strategy Lab"
+APP_NAME = "ASK StratIQ"
 
 # -------------------- Page & Session Setup --------------------
 st.set_page_config(page_title=APP_NAME, layout="wide")
@@ -192,7 +192,7 @@ if st.session_state.step == 0:
         gen1 = _get_generator()
         try:
             auto_scope = gen1.generate_scope(
-            company=(state.get("company") or "").strip()    # <-- only company
+            company=(state.get("company"),).strip()    # <-- only company
             )
         except Exception as e:
             st.info(f"Scope auto-gen skipped: {e}")

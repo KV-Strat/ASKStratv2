@@ -57,7 +57,7 @@ if "state" not in st.session_state:
 state = st.session_state.state
 # Ensure any direct session_state keys you'll read are initialized once
 st.session_state.setdefault("scope_lock_manual", False)
-st.session_state.setdefault("scope", "")
+#st.session_state.setdefault("scope", "")
 st.session_state.setdefault("offline_mode", False)
 
 # -------------------- Helpers --------------------
@@ -66,7 +66,9 @@ def _get_generator() -> "StrategyGenerator":
     """Return a StrategyGenerator. Falls back to offline if OpenAI not configured."""
     if (StrategyGenerator is None) or state.get("offline_mode", False):
         st.info(
-            "`generate.py` not found/importable. The app will still run with a minimal mock.",
+            f"`generate.py` not found/importable. "
+            f"The app will still run with a minimal mock. "
+            f"(offline_mode={offline_mode})",
             icon="ℹ️",
         )
         # Very small fallback shim

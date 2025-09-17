@@ -182,9 +182,15 @@ if st.session_state.step == 0:
     gen1 = _get_generator()
     auto_scope = ""
     if not state.get("scope_lock_manual", False):
+        _GEN_SCOPE = (
+            "You are a concise strategy analyst. Return only strict text with the requested keys. "
+            "No prose, no markdown, no backticks. Keep one sentence (<=18 words)."
+        )
         try:
             auto_scope = gen1.generate_scope(
             company=state.get("company") or "",       
+            )
+            out = self.provider.complete(_GEN_SCOPE, _scope_prompt(company))
             )
         except TypeError as te:
             st.warning(f"Scope auto-gen skipped: {te}")

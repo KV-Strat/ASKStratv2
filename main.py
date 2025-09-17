@@ -179,6 +179,7 @@ if st.session_state.step == 0:
                                                    help="Prevents auto updates from overwriting your changes.")
     with c2:
         auto_refresh = st.toggle("Auto-generate on change", value=True)
+    gen = _get_generator()
     state["scope"] = st.text_input(
         "Scope *",
         value=state.get("scope") or "",

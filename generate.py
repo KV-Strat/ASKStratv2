@@ -14,6 +14,7 @@ Usage (in Streamlit button handler):
 
     results = gen.generate_selected_frameworks(
         company=state["company"],
+        scope=state["scope"],
         product=state["product"],
         frameworks=state["frameworks"],
         notes=state.get("notes"),
@@ -110,6 +111,7 @@ _GEN_SYS = (
 def _swot_prompt(company: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
+scope: {scope}
 Product: {product}
 Geography: {geo or "unspecified"}
 Notes: {notes or ""}
@@ -348,6 +350,7 @@ if __name__ == "__main__":
     gen = StrategyGenerator(provider=None)  # offline fallback
     res = gen.generate_selected_frameworks(
         company="ACME Robotics",
+        scope="manufacturing",
         product="Industrial IoT Sensors",
         frameworks=["SWOT", "Ansoff", "Benchmark"],
         notes="Mid-market focus",

@@ -7,7 +7,7 @@ Strategy content generation engine for your Streamlit app (Step 1).
 
 Usage (in Streamlit button handler):
 
-    from generate import StrategyGenerator, OpenAIProvider
+    #from generate import StrategyGenerator, OpenAIProvider
 
     provider = OpenAIProvider(model="gpt-4o-mini")  # or None for offline fallback
     gen = StrategyGenerator(provider)

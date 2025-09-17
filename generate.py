@@ -332,9 +332,9 @@ class StrategyGenerator:
         out: Dict[str, Any] = {}
         fwset = set([f.strip() for f in frameworks])
         if "SWOT" in fwset:
-            out["SWOT"] = self.generate_swot(company, product, notes=notes, geo=geo)
+            out["SWOT"] = self.generate_swot(company, scope, product, notes=notes, geo=geo)
         if "Ansoff" in fwset:
-            out["Ansoff"] = self.generate_ansoff(company, product, notes=notes, geo=geo)
+            out["Ansoff"] = self.generate_ansoff(company, scope, product, notes=notes, geo=geo)
         if "Benchmark" in fwset:
             out["Benchmark"] = self.generate_benchmark(company, product, peers=peers)
         if "Fit Matrix" in fwset:

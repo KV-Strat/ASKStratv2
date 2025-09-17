@@ -108,7 +108,7 @@ _GEN_SYS = (
     "No prose, no markdown, no backticks. Keep each list item short (<=18 words)."
 )
 
-def _compose_scope_prompt(company: str) -> str:
+def _scope_prompt(company: str) -> str:
     return f"""
 Company: {company}
 

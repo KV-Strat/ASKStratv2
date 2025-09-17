@@ -55,6 +55,10 @@ if "state" not in st.session_state:
     }
 
 state = st.session_state.state
+# Ensure any direct session_state keys you'll read are initialized once
+st.session_state.setdefault("scope_lock_manual", False)
+st.session_state.setdefault("scope", "")
+st.session_state.setdefault("offline_mode", True)
 
 # -------------------- Helpers --------------------
 

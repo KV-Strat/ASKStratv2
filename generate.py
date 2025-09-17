@@ -110,10 +110,9 @@ _GEN_SYS = (
 
 def _compose_scope_prompt(company: str) -> str:
     return f"""
-You are a strategy analyst. Write ONE concise scope line (max ~16 words) that states
-what the company does. Do not add bullets or extra lines.
 Company: {company}
-Respond with a single sentence only.
+
+Produce a single sentence only which is text.
 """.strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -218,18 +217,23 @@ def _fallback_benchmark(company: str, peers: List[str], caps: List[str]) -> Dict
 # ---------------------- Core Generator ----------------------
 
 @dataclass
+class StrategyGeneratorscope:
+    provider: Optional[LLMProvider] = None
+
+    # ---- Public API ----
+    
+    def generate_scope(self, company: str -> Dict[str, List[str]]:
+        if self.provider:
+            out = self.provider.complete(_GEN_SYS, _compose_scope_prompt(company))
+                return out
+        # fallback
+        return "builds and sells robots"
+        
 class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
-
-    def generate_scope(company: str) -> Optional[str]:
-        if self.provider:
-            prompt = _compose_scope_prompt(company)
-            out = self.provider.complete(prompt)
-            return out
-        return _fallback_scope()
-
+    
     def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(
@@ -370,7 +374,7 @@ if __name__ == "__main__":
     gen = StrategyGenerator(provider=None)  # offline fallback
     res = gen.generate_selected_frameworks(
         company="ACME Robotics",
-        scope="manufacturing",
+        scope="builds and sells robots",
         product="Industrial IoT Sensors",
         frameworks=["SWOT", "Ansoff", "Benchmark"],
         notes="Mid-market focus",

@@ -175,30 +175,34 @@ if st.session_state.step == 0:
     state["company"] = st.text_input("Company *", state["company"], max_chars=80, placeholder="e.g., ACME Robotics")
     c1, c2 = st.columns(2)
     with c1:
-        st.session_state.scope_lock_manual = st.toggle("Lock manual scope edits", value=st.session_state.scope_lock_manual,
-                                                   help="Prevents auto updates from overwriting your changes.")
-    with c2:
-        auto_refresh = st.toggle("Auto-generate on change", value=True)
-    gen1 = _get_generator()
-    auto_scope = ""
-    if not state.get("scope_lock_manual", False):
-        _GEN_SCOPE = (
-            "You are a concise strategy analyst. Return only strict text with the requested keys. "
-            "No prose, no markdown, no backticks. Keep one sentence (<=18 words)."
+        state["scope_lock_manual"] = st.toggle(
+            "Lock manual scope edits",
+            value=state.get("scope_lock_manual", False),
+            help="Prevents auto updates from overwriting your changes.",
         )
+    with c2:
+        state["auto_refresh"] = st.toggle(
+            "Auto-generate on change",
+            value=state.get("auto_refresh", True),
+            help="When on, Scope updates when Company changes."
+        )
+    # Auto-fill scope (only when allowed)
+    auto_scope = ""
+    if state["auto_refresh"] and not state["scope_lock_manual"]:
+        gen1 = _get_generator()
         try:
             auto_scope = gen1.generate_scope(
-            company=state.get("company") or "",       
+            company=(state.get("company") or "").strip()    # <-- only company
             )
-            out = self.provider.complete(_GEN_SCOPE, _scope_prompt(company))
-        except TypeError as te:
-            st.warning(f"Scope auto-gen skipped: {te}")
-    state["scope"] = st.text_input(
+        except Exception as e:
+            st.info(f"Scope auto-gen skipped: {e}")
+     # Scope input (shows generated value, but user can override)
+     state["scope"] = st.text_input(
         "Scope *",
         value=state.get("scope") or auto_scope or "Sells groceries",
         max_chars=80,
         placeholder="Sells groceries",
-    )
+     )   
     #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")
     state["geo"] = st.selectbox("Geography (optional)", ["", "US", "EU", "APAC"], index=0)

@@ -71,6 +71,8 @@ def _get_generator() -> "StrategyGenerator":
         )
         # Very small fallback shim
         class _MockGen:
+            def generate_scope(self, **kwargs):
+                return ""
             def generate_selected_frameworks(self, **kwargs):
                 return {
                     "SWOT": {

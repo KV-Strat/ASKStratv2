@@ -64,7 +64,7 @@ st.session_state.setdefault("offline_mode", False)
 
 def _get_generator() -> "StrategyGenerator":
     """Return a StrategyGenerator. Falls back to offline if OpenAI not configured."""
-    offline_mode = state.get("offline_mode", False)
+    offline_mode = state.get("offline_mode", True)
     if (StrategyGenerator is None) or offline_mode:
         st.info(
             f"`generate.py` not found/importable. "

@@ -108,7 +108,7 @@ _GEN_SYS = (
     "No prose, no markdown, no backticks. Keep each list item short (<=18 words)."
 )
 
-def _swot_prompt(company: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
+def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
 scope: {scope}
@@ -214,7 +214,7 @@ class StrategyGenerator:
     def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(
-                self.provider.complete(_GEN_SYS, _swot_prompt(company, product, notes, geo))
+                self.provider.complete(_GEN_SYS, _swot_prompt(company, scope, product, notes, geo))
             )
             S = _coerce_list(out.get("S"))
             W = _coerce_list(out.get("W"))

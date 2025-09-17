@@ -211,7 +211,7 @@ class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
-    def generate_swot(self, company: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
+    def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(
                 self.provider.complete(_GEN_SYS, _swot_prompt(company, product, notes, geo))
@@ -225,7 +225,7 @@ class StrategyGenerator:
         # fallback
         return _fallback_swot()
 
-    def generate_ansoff(self, company: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
+    def generate_ansoff(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(
                 self.provider.complete(_GEN_SYS, _ansoff_prompt(company, product, notes, geo))
@@ -243,7 +243,7 @@ class StrategyGenerator:
                 }
         return _fallback_ansoff()
 
-    def generate_benchmark(self, company: str, product: str, *, peers: Optional[List[str]] = None, caps: Optional[List[str]] = None) -> Dict[str, Any]:
+    def generate_benchmark(self, company: str, scope: str, product: str, *, peers: Optional[List[str]] = None, caps: Optional[List[str]] = None) -> Dict[str, Any]:
         peers = peers or ["PeerA", "PeerB"]
         caps = caps or _DEF_BENCH_CAPS
         if self.provider:
@@ -322,6 +322,7 @@ class StrategyGenerator:
         self,
         *,
         company: str,
+        scope: str,
         product: str,
         frameworks: List[str],
         notes: Optional[str] = None,

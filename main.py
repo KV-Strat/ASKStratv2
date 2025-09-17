@@ -181,13 +181,13 @@ if st.session_state.step == 0:
         auto_refresh = st.toggle("Auto-generate on change", value=True)
     gen = _get_generator()
     auto_scope = ""
-       if not state.get("scope_lock_manual", False):
-           try:
-               auto_scope = gen.generate_scope(
-               company=state.get("company") or "",       
-           )
-           except TypeError as te:
-              st.warning(f"Scope auto-gen skipped: {te}")
+    if not state.get("scope_lock_manual", False):
+        try:
+            auto_scope = gen.generate_scope(
+            company=state.get("company") or "",       
+            )
+        except TypeError as te:
+            st.warning(f"Scope auto-gen skipped: {te}")
     state["scope"] = st.text_input(
         "Scope *",
         value=state.get("scope") or auto_scope or "Sells groceries",

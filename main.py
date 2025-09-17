@@ -163,7 +163,7 @@ def on_generate_click():
             state["recs"] = gen.generate_recommendations(state["results"])
         st.toast("Analysis generated.", icon="✅")
         st.session_state.step = 2
-        st.rerun()
+        #st.rerun()
     except Exception as e:
         st.error(f"Generation failed: {e}")
 

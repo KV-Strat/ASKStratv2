@@ -108,6 +108,14 @@ _GEN_SYS = (
     "No prose, no markdown, no backticks. Keep each list item short (<=18 words)."
 )
 
+def _compose_scope_prompt(company: str) -> str:
+    return f"""
+You are a strategy analyst. Write ONE concise scope line (max ~16 words) that states
+what the company does. Do not add bullets or extra lines.
+Company: {company}
+Respond with a single sentence only.
+""".strip()
+
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
@@ -161,6 +169,9 @@ Keep titles crisp; impact×effort should reflect SWOT threats/opportunities and 
 
 # ---------------------- Fallback (offline) heuristics ----------------------
 
+def _fallback_scope() -> Dict[str, List[str]]:
+    return ""
+
 def _fallback_swot() -> Dict[str, List[str]]:
     return {
         "S": [
@@ -211,6 +222,14 @@ class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
+
+    def generate_scope(company: str) -> Optional[str]:
+        if self.provider:
+            prompt = _compose_scope_prompt(company)
+            out = self.provider.complete(prompt)
+            return out
+        return _fallback_scope()
+
     def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(

@@ -192,7 +192,7 @@ if st.session_state.step == 0:
         gen1 = _get_generator()
         try:
             auto_scope = gen1.generate_scope(
-            company=(state.get("company"),).strip()    # <-- only company
+            company=(state.get("company"))   # <-- only company
             )
         except Exception as e:
             st.info(f"Scope auto-gen skipped: {e}")

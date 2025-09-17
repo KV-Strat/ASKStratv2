@@ -180,11 +180,19 @@ if st.session_state.step == 0:
     with c2:
         auto_refresh = st.toggle("Auto-generate on change", value=True)
     gen = _get_generator()
+    auto_scope = ""
+       if not state.get("scope_lock_manual", False):
+           try:
+               auto_scope = gen.generate_scope(
+               company=state.get("company") or "",       
+           )
+           except TypeError as te:
+              st.warning(f"Scope auto-gen skipped: {te}")
     state["scope"] = st.text_input(
         "Scope *",
-        value=gen.generate_scope(company=state["company"],) or "",
+        value=state.get("scope") or auto_scope or "Sells groceries",
         max_chars=80,
-        placeholder="e.g., Manufacturing",
+        placeholder="Sells groceries",
     )
     #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")

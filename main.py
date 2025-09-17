@@ -182,7 +182,7 @@ if st.session_state.step == 0:
     gen = _get_generator()
     state["scope"] = st.text_input(
         "Scope *",
-        value=state.get("scope") or "",
+        value=gen.generate_scope or "",
         max_chars=80,
         placeholder="e.g., Manufacturing",
     )

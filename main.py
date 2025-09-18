@@ -252,25 +252,8 @@ elif st.session_state.step == 2:
         for idx, name in enumerate(fws):
             with tabs[idx]:
                 if name == "Industry Analysis":
-                    cols = st.columns(5)
-                    ind = _list_to_text(state["results"].get("industry", {}).get("ind", []))
-                    tam = _list_to_text(state["results"].get("industry", {}).get("tam", []))
-                    with cols[0]:
-                        new_S = st.text_area("Strengths", value=S, height=140)
-                    with cols[1]:
-                        new_W = st.text_area("Weaknesses", value=W, height=140)
-                    with cols[2]:
-                        new_O = st.text_area("Opportunities", value=O, height=140)
-                    with cols[3]:
-                        new_T = st.text_area("Threats", value=T, height=140)
-                    if st.button("Save SWOT edits", key="save_swot"):
-                        state["results"]["SWOT"] = {
-                            "S": _text_to_list(new_S),
-                            "W": _text_to_list(new_W),
-                            "O": _text_to_list(new_O),
-                            "T": _text_to_list(new_T),
-                        }
-                        st.toast("SWOT saved.", icon="💾")
+                    st.write("Industry Analysis (read‑only preview). Add editing in Step 2.")
+                    st.dataframe(state["results"].get("ind", {}).get("table", []), use_container_width=True)
 
                 if name == "SWOT":
                     cols = st.columns(4)

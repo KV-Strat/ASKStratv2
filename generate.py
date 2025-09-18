@@ -121,9 +121,17 @@ Product: {product}
 Geography: {geo or "unspecified"}
 Notes: {notes or ""}
 
-Return strict JSON with keys industry vertical name and TAM. List top 10 industry verticals applicable to scope and product.industry vertical name is text and TAM is number represented in billions.
+Return strict JSON. 
+List the top 5 industry verticals applicable to the Company, Scope, and Product. 
+Each item must include:
+- "industry_vertical_name": a string with the vertical's name
+- "TAM": a number in billions (integer or float)
+
 Example schema:
-{{"ind":[],"tam":[]}}
+[
+  {{"industry_vertical_name": "Financial Services", "TAM": 20}},
+  {{"industry_vertical_name": "Healthcare & Life Sciences", "TAM": 15}}
+]
 """.strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -181,6 +189,15 @@ Keep titles crisp; impact×effort should reflect SWOT threats/opportunities and 
 
 def _fallback_scope() -> Dict[str, List[str]]:
     return ""
+
+def _fallback_ansoff() -> Dict[str, List[str]]:
+    return {
+        {"industry_vertical_name": "Financial Services", "TAM": 20},
+        {"industry_vertical_name": "Healthcare & Life Sciences", "TAM": 15},
+        {"industry_vertical_name": "Government & Public Sector", "TAM": 12},
+        {"industry_vertical_name": "Manufacturing", "TAM": 10},
+        {"industry_vertical_name": "Telecommunications", "TAM": 9},
+    }
 
 def _fallback_swot() -> Dict[str, List[str]]:
     return {
@@ -244,17 +261,15 @@ class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
-    def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
+    def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> List[Dict[str, Union[str, float]]]:      
         if self.provider:
             out = _extract_json(
                 self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
             )
-            Industry = _coerce_list(out.get("ind"))
-            tam = _coerce_list(out.get("tam"))
-            if any([ind, tam]):
-                return {"ind": _topn(ind), "tam": _topn(tam)}
+            if isinstance(out, list):
+                return out[:5]
         # fallback
-        return _fallback_swot()
+        return _fallback_ind()
         
     def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:

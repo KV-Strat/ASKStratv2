@@ -113,6 +113,7 @@ def _scope_prompt(company: str) -> str:
 Company: {company}
        Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
+
 def _industry_analysis_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
@@ -263,7 +264,7 @@ class StrategyGenerator:
     # ---- Public API ----
     def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> List[Dict[str, Union[str, float]]]:      
         if self.provider:
-            out = self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
+            out = _extract_json(self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo)))
             #if isinstance(out, list):
             return out[]
         # fallback

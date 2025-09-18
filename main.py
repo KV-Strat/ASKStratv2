@@ -176,35 +176,11 @@ st.progress((st.session_state.step + 1) / 5, text=f"Step {st.session_state.step 
 if st.session_state.step == 0:
     st.subheader("Inputs")
     state["company"] = st.text_input("Company *", state["company"], max_chars=80, placeholder="e.g., ACME Robotics")
-    c1, c2 = st.columns(2)
-    with c1:
-        state["scope_lock_manual"] = st.toggle(
-            "Lock manual scope edits",
-            value=state.get("scope_lock_manual", False),
-            help="Prevents auto updates from overwriting your changes.",
-        )
-    with c2:
-        state["auto_refresh"] = st.toggle(
-            "Auto-generate on change",
-            value=state.get("auto_refresh", True),
-            help="When on, Scope updates when Company changes."
-        )
-    # Auto-fill scope (only when allowed)
-    auto_scope = ""
-    #if state["auto_refresh"] and not state["scope_lock_manual"]:
-        #gen1 = _get_generator()
-        #try:
-            #auto_scope = gen1.generate_scope(
-            #company=(state.get("company"))   # <-- only company
-            #)
-        #except Exception as e:
-            #st.info(f"Scope auto-gen skipped: {e}")
-    # Scope input (shows generated value, but user can override)
-    state["scope"] = st.text_input(
-        "Scope *",
-        value=state.get("scope") or auto_scope or "Sells groceries",
+    scope = st.text_input(
+        "Scope (auto-filled from company if blank)",
+        value=st.session_state.company if st.session_state.company else "",
+        key="scope",
         max_chars=80,
-        placeholder="Sells groceries",
     ) 
     #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")

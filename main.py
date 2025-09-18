@@ -42,6 +42,7 @@ if "state" not in st.session_state:
         "notes": None,
         "frameworks": ["SWOT", "Ansoff"],
         "results": {
+            "ind":[],
             "SWOT": {"S": [], "W": [], "O": [], "T": []},
             "Ansoff": {
                 "market_penetration": [],
@@ -253,8 +254,8 @@ elif st.session_state.step == 2:
             with tabs[idx]:
                 if name == "Industry Analysis":
                     st.write("Industry Analysis (read‑only preview). Add editing in Step 2.")
-                    st.dataframe(state["results"].get("ind", []), use_container_width=True)
-
+                   st.dataframe(state["ind"], width="stretch")
+                
                 if name == "SWOT":
                     cols = st.columns(4)
                     S = _list_to_text(state["results"].get("SWOT", {}).get("S", []))

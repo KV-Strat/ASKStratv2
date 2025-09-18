@@ -179,7 +179,7 @@ if st.session_state.step == 0:
     st.session_state.setdefault("scope", "")
     state["company"] = st.text_input("Company *", state["company"], max_chars=80)
     company_value = st.session_state.get("company", "")
-    state["scope] = state[company"]
+    state["scope"] = state["company"]
     state["scope"] = st.text_input(
         "Scope (auto-filled from company if blank)",
         state["scope"],

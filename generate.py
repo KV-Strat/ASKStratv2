@@ -369,6 +369,17 @@ class StrategyGenerator:
             ]}
         return out
 
+    def generate_scope(self, company: str) -> str:
+        """ Auto-generate a business scope from just the company name.
+        """
+        prompt = f"""
+        Company: {company}
+
+        Suggest a concise 1-line description of the relevant business scope.
+        """.strip()
+        result = self.provider.chat([{"role": "user", "content": prompt}])
+        return result.strip()
+
 # ---------------------- Quick self-test ----------------------
 if __name__ == "__main__":
     gen = StrategyGenerator(provider=None)  # offline fallback

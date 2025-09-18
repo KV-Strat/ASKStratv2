@@ -266,7 +266,7 @@ class StrategyGenerator:
         if self.provider:
             out = _extract_json(self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo)))
             #if isinstance(out, list):
-            return out[]
+            return out
         # fallback
         return _fallback_ind()
         

@@ -391,7 +391,7 @@ class StrategyGenerator:
         out: Dict[str, Any] = {}
         fwset = set([f.strip() for f in frameworks])
         if "Industry Analysis" in fwset:
-            out["Industry Analysis"] = self.generate_Industry_Analysis(company, scope, product, notes=notes, geo=geo)
+            out["ind"] = self.generate_Industry_Analysis(company, scope, product, notes=notes, geo=geo)
         if "SWOT" in fwset:
             out["SWOT"] = self.generate_swot(company, scope, product, notes=notes, geo=geo)
         if "Ansoff" in fwset:

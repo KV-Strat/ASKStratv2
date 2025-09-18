@@ -121,9 +121,9 @@ Product: {product}
 Geography: {geo or "unspecified"}
 Notes: {notes or ""}
 
-Produce JSON exactly with keys industry verticals served for company, scope and product. Keys are industry vertical name and TAM. industry vertical name is text and TAM is number represented in billions.
+Return strict JSON with keys industry vertical name and TAM. List top 10 industry verticals applicable to scope and product.industry vertical name is text and TAM is number represented in billions.
 Example schema:
-{{"S":[],"W":[],"O":[],"T":[]}}
+{{"ind":[],"tam":[]}}
 """.strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -249,12 +249,10 @@ class StrategyGenerator:
             out = _extract_json(
                 self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
             )
-            S = _coerce_list(out.get("S"))
-            W = _coerce_list(out.get("W"))
-            O = _coerce_list(out.get("O"))
-            T = _coerce_list(out.get("T"))
-            if any([S, W, O, T]):
-                return {"S": _topn(S), "W": _topn(W), "O": _topn(O), "T": _topn(T)}
+            Industry = _coerce_list(out.get("ind"))
+            tam = _coerce_list(out.get("tam"))
+            if any([ind, tam]):
+                return {"ind": _topn(ind), "tam": _topn(tam)}
         # fallback
         return _fallback_swot()
         

@@ -113,6 +113,18 @@ def _scope_prompt(company: str) -> str:
 Company: {company}
        Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
+def _industry_analysis_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
+    return f"""
+Company: {company}
+scope: {scope}
+Product: {product}
+Geography: {geo or "unspecified"}
+Notes: {notes or ""}
+
+Produce JSON exactly with keys industry verticals served for company, scope and product. Keys are industry vertical name and TAM. industry vertical name is text and TAM is number represented in billions.
+Example schema:
+{{"S":[],"W":[],"O":[],"T":[]}}
+""".strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
@@ -232,7 +244,20 @@ class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
-    
+    def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
+        if self.provider:
+            out = _extract_json(
+                self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
+            )
+            S = _coerce_list(out.get("S"))
+            W = _coerce_list(out.get("W"))
+            O = _coerce_list(out.get("O"))
+            T = _coerce_list(out.get("T"))
+            if any([S, W, O, T]):
+                return {"S": _topn(S), "W": _topn(W), "O": _topn(O), "T": _topn(T)}
+        # fallback
+        return _fallback_swot()
+        
     def generate_swot(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, List[str]]:
         if self.provider:
             out = _extract_json(
@@ -353,6 +378,8 @@ class StrategyGenerator:
     ) -> Dict[str, Any]:
         out: Dict[str, Any] = {}
         fwset = set([f.strip() for f in frameworks])
+        if "Industry Analysis" in fwset:
+            out["Industry Analysis"] = self.generate_Industry_Analysis(company, scope, product, notes=notes, geo=geo)
         if "SWOT" in fwset:
             out["SWOT"] = self.generate_swot(company, scope, product, notes=notes, geo=geo)
         if "Ansoff" in fwset:

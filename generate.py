@@ -111,7 +111,7 @@ _GEN_SYS = (
 def _scope_prompt(company: str) -> str:
     return f"""
 Company: {company}
-       Produce JSON exactly with a concise 1-line description of the relevant business scope of the company.
+       Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -373,7 +373,7 @@ class StrategyGenerator:
             out = _extract_json(
                 self.provider.complete(_GEN_SYS, _scope_prompt(company))
             )
-        return out
+        return out.get("scope", "")
 
 # ---------------------- Quick self-test ----------------------
 if __name__ == "__main__":

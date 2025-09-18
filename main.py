@@ -54,11 +54,17 @@ if "state" not in st.session_state:
         "export": {"type": "ppt", "path": None},
     }
 
-state = st.session_state.state
 # Ensure any direct session_state keys you'll read are initialized once
-st.session_state.setdefault("scope_lock_manual", False)
-#st.session_state.setdefault("scope", "")
-st.session_state.setdefault("offline_mode", False)
+if st.session_state.step == 0:
+    st.subheader("Inputs")
+    st.session_state.setdefault("company", "")
+    st.session_state.setdefault("scope", "")
+    st.session_state.setdefault("prev_company", "")
+    st.session_state.setdefault("scope_lock_manual", False)
+    st.session_state.setdefault("offline_mode", False)
+    
+state = st.session_state.state
+
 
 # -------------------- Helpers --------------------
 
@@ -124,6 +130,12 @@ def _get_generator() -> "StrategyGenerator":
 
     return StrategyGenerator(provider)
 
+def get_gen():
+    if "gen" not in st.session_state or st.session_state.get("offline_mode") != st.session_state.get("_gen_offline_mode"):
+        st.session_state["gen"] = _get_generator()
+        st.session_state["_gen_offline_mode"] = st.session_state.get("offline_mode", False)
+    return st.session_state["gen"]
+
 
 def _list_to_text(items):
     return "\n".join(items or [])
@@ -180,12 +192,19 @@ if st.session_state.step == 0:
     state["company"] = st.text_input("Company *", state["company"], max_chars=80)
     company_value = st.session_state.get("company", "")
     #state["scope"] = state["company"]
-    state["scope"] = gen.generate_scope(state["company"])
+    gen = get_gen()
+    company_changed = state["company"] != st.session_state.get("prev_company", "")
+    if state["company"] and (not state["scope"] or company_changed) and not state.get("offline_mode", False):
+        try:
+            state["scope"] = gen.generate_scope(state["company"])
+        except Exception as e:
+            st.caption(f"Scope auto-gen skipped: {e}")
     state["scope"] = st.text_input(
         "Scope (auto-filled from company if blank)",
         state["scope"],
         max_chars=80,
     ) 
+    st.session_state["prev_company"] = state["company"]
     #state["scope"] = st.text_input("Scope *", state["scope"], max_chars=80, placeholder="e.g., Manufacturing")
     state["product"] = st.text_input("Product/Line *", state["product"], max_chars=80, placeholder="e.g., Edge IoT Sensors")
     state["geo"] = st.selectbox("Geography (optional)", ["", "US", "EU", "APAC"], index=0)

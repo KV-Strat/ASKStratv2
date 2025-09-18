@@ -190,7 +190,7 @@ Keep titles crisp; impact×effort should reflect SWOT threats/opportunities and 
 def _fallback_scope() -> Dict[str, List[str]]:
     return ""
 
-def _fallback_ansoff() -> Dict[str, List[str]]:
+def _fallback_ind() -> Dict[str, List[str]]:
     return {
         {"industry_vertical_name": "Financial Services", "TAM": 20},
         {"industry_vertical_name": "Healthcare & Life Sciences", "TAM": 15},
@@ -263,11 +263,9 @@ class StrategyGenerator:
     # ---- Public API ----
     def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> List[Dict[str, Union[str, float]]]:      
         if self.provider:
-            out = _extract_json(
-                self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
-            )
-            if isinstance(out, list):
-                return out[:5]
+            out = self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo))
+            #if isinstance(out, list):
+            return out[]
         # fallback
         return _fallback_ind()
         

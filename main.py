@@ -231,8 +231,8 @@ if st.session_state.step == 0:
 # Step 1 — Framework selection
 elif st.session_state.step == 1:
     st.subheader("Select frameworks")
-    available = ["SWOT", "Ansoff", "Benchmark", "Fit Matrix"]
-    selected = st.multiselect("Choose 1–4", options=available, default=state.get("frameworks", ["SWOT", "Ansoff"]))
+    available = ["Industry Analysis", "SWOT", "Ansoff", "Benchmark", "Fit Matrix"]
+    selected = st.multiselect("Choose 1–5", options=available, default=state.get("frameworks", ["Industry Analysis", "SWOT", "Ansoff"]))
     state["frameworks"] = selected
 
     col1, col2 = st.columns(2)
@@ -251,6 +251,27 @@ elif st.session_state.step == 2:
         tabs = st.tabs(fws)
         for idx, name in enumerate(fws):
             with tabs[idx]:
+                if name == "Industry Analysis":
+                    cols = st.columns(5)
+                    ind = _list_to_text(state["results"].get("industry", {}).get("ind", []))
+                    tam = _list_to_text(state["results"].get("industry", {}).get("tam", []))
+                    with cols[0]:
+                        new_S = st.text_area("Strengths", value=S, height=140)
+                    with cols[1]:
+                        new_W = st.text_area("Weaknesses", value=W, height=140)
+                    with cols[2]:
+                        new_O = st.text_area("Opportunities", value=O, height=140)
+                    with cols[3]:
+                        new_T = st.text_area("Threats", value=T, height=140)
+                    if st.button("Save SWOT edits", key="save_swot"):
+                        state["results"]["SWOT"] = {
+                            "S": _text_to_list(new_S),
+                            "W": _text_to_list(new_W),
+                            "O": _text_to_list(new_O),
+                            "T": _text_to_list(new_T),
+                        }
+                        st.toast("SWOT saved.", icon="💾")
+
                 if name == "SWOT":
                     cols = st.columns(4)
                     S = _list_to_text(state["results"].get("SWOT", {}).get("S", []))

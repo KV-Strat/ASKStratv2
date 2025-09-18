@@ -175,7 +175,9 @@ st.progress((st.session_state.step + 1) / 5, text=f"Step {st.session_state.step 
 # Step 0 — Inputs
 if st.session_state.step == 0:
     st.subheader("Inputs")
-    state["company"] = st.text_input("Company *", state["company"], max_chars=80, placeholder="e.g., ACME Robotics")
+    st.session_state.setdefault("company", "")
+    st.session_state.setdefault("scope", "")
+    state["company"] = st.text_input("Company *", state["company"], max_chars=80)
     company_value = st.session_state.get("company", "")
     scope = st.text_input(
         "Scope (auto-filled from company if blank)",

@@ -273,7 +273,7 @@ def ind_to_long_records(ind_raw):
 
 def slide_ind(prs, ind_raw):
     records = ind_to_long_records(ind_raw)
-    lines=""
+    lines=[]
     for r in records:
         line = "\t".join(str(r))
         lines.append(line)

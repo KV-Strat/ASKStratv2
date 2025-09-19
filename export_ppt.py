@@ -24,6 +24,7 @@ from io import BytesIO
 from datetime import datetime
 import numpy as np
 import streamlit as st
+import pandas as pd
 
 W, H = Inches(13.333), Inches(7.5)
 MARGIN = Inches(0.8)

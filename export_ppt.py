@@ -242,11 +242,11 @@ def slide_ind(prs: Presentation, ind: Dict[str, List[str]]):
     rows = 1 + len(metrics)         # header row + metric rows
     cols = 1 + len(ind)            # metric label col + one col per industry
     # Title
-    title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.2), Inches(9), Inches(0.6))
-    ttf = title_box.text_frame
-    ttf.text = title
-    ttf.paragraphs[0].font.size = Pt(24)
-    ttf.paragraphs[0].font.bold = True
+    #title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.2), Inches(9), Inches(0.6))
+    #ttf = title_box.text_frame
+    #ttf.text = title
+    #ttf.paragraphs[0].font.size = Pt(24)
+    #ttf.paragraphs[0].font.bold = True
 
     # Table
     table_shape = slide.shapes.add_table(

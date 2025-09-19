@@ -279,6 +279,7 @@ def slide_ind(prs, ind_raw):
         lines.append(line)
     slide = prs.slides.add_slide(prs.slide_layouts[5])
     _add_heading(slide, "INDUSTRY ANALYSIS")
+    lines_per_slide=20
     for start in range(0, len(lines), lines_per_slide):
         chunk = "\n".join(lines[start:start+lines_per_slide])
         box = slide.shapes.add_textbox(Inches(0.5), Inches(1.0), Inches(9.0), Inches(5.0))
@@ -287,7 +288,7 @@ def slide_ind(prs, ind_raw):
         t.text = chunk
         for p in t.paragraphs:
             p.font.name = "Courier New"   # columns line up better
-            p.font.size = Pt(12)
+            p.font.size = Pt(10)
     return slide
 
 def slide_swot(prs: Presentation, swot: Dict[str, List[str]]):

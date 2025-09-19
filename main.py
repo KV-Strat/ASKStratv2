@@ -265,7 +265,7 @@ elif st.session_state.step == 2:
                         for k in keys:
                             if isinstance(cs, dict) and k in cs:
                                 return first(cs[k])
-                    return ""
+                        return ""
                     cols = {}
                     for item in industries[:5]:
                         name = item.get("industry_vertical_name", "")

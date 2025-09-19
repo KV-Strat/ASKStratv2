@@ -287,7 +287,7 @@ def slide_ind(prs, ind_raw):
         for p in t.paragraphs:
             p.font.name = "Courier New"   # columns line up better
             p.font.size = Pt(12)
-return slide
+    return slide
 
 def slide_swot(prs: Presentation, swot: Dict[str, List[str]]):
     slide = prs.slides.add_slide(prs.slide_layouts[5])

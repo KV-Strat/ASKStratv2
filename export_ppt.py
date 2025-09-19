@@ -475,8 +475,8 @@ def build_ppt_from_state(state: Dict[str, Any]) -> (BytesIO, str):
 
     # Industry Analysis
     Ind = results.get("ind") or {}
-    if ind:
-        slide_ind(prs, ind)
+    if Ind:
+        slide_ind(prs, Ind)
     
     # SWOT
     if swot:

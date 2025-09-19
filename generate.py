@@ -114,6 +114,9 @@ Company: {company}
        Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
 
+with open("porter.json", "r") as f:
+    success_factors = json.load(f)
+
 def _industry_analysis_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
@@ -123,16 +126,68 @@ Geography: {geo or "unspecified"}
 Notes: {notes or ""}
 
 Return strict JSON. 
-List the top 5 industry verticals applicable to the Company, Scope, and Product. 
+
+You are given a JSON file of success factors:
+{json.dumps(success_factors, indent=2)}
+
+Task:
+1. List the top 5 industry verticals applicable to the Company, Scope, and Product. 
+2. From this JSON, boil down to 3 most critical success factor categories for the industry and scope
+3. Select the top 3 critical success factors in each category most relevant to the Company, Scope, and Product.
 Each item must include:
 - "industry_vertical_name": a string with the vertical's name
 - "TAM": a number in billions (integer or float)
+- "Critical Success category" with the respective critical success factors. Limit to 5 words and make it contextual to scope and product
+
 
 Example schema:
-[
-  {{"industry_vertical_name": "Financial Services", "TAM": 20}},
-  {{"industry_vertical_name": "Healthcare & Life Sciences", "TAM": 15}}
-]
+  {
+     "industries": [
+            {
+                "industry_vertical_name": "Financial Services",
+                "TAM": 20,
+                "Critical_success_category": {
+                    "Brand": [
+                        "Trust with regulated clients",
+                        "Strong financial client references",
+                        "Reputation for compliance readiness"
+                        ],
+                    "Economies_of_Scale": [
+                        "Shared R&D costs across global clients",
+                        "Specialized financial services teams",
+                        "Extensive partner ecosystem"
+                        ],
+                    "Capital": [
+                        "Upfront compliance investment",
+                        "Infrastructure resilience",
+                        "Integration with legacy banking systems"
+                        ]
+                }
+            },
+            {
+                "industry_vertical_name": "Manufacturing",
+                "TAM": 10,
+                "Critical_success_category": {
+                    "Brand": [
+                        "Trusted vendor for factory automation"
+                        "Proven reliability in industrial workflows",
+                        "Reputation for minimizing downtime"
+                        ],
+                    "Economies_of_Scale": [
+                        "Global standardization lowers automation cost",
+                        "Shared R&D across manufacturing clients",
+                        "Bulk deployments reduce per-unit pricing"
+                        ],
+                    "Capital": [
+                        "Integration with robotics demands investment",
+                        "IoT infrastructure requires upfront funding",
+                        "Legacy system upgrades need capital"
+                        ]
+                    }
+                }
+            ]
+        }
+}
 """.strip()
 
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -193,11 +248,51 @@ def _fallback_scope() -> Dict[str, List[str]]:
 
 def _fallback_ind() -> Dict[str, List[str]]:
     return {
-        {"industry_vertical_name": "Financial Services", "TAM": 20},
-        {"industry_vertical_name": "Healthcare & Life Sciences", "TAM": 15},
-        {"industry_vertical_name": "Government & Public Sector", "TAM": 12},
-        {"industry_vertical_name": "Manufacturing", "TAM": 10},
-        {"industry_vertical_name": "Telecommunications", "TAM": 9},
+        "industries": [
+            {
+                "industry_vertical_name": "Financial Services",
+                "TAM": 20,
+                "Critical_success_category": {
+                    "Brand": [
+                        "Trust with regulated clients",
+                        "Strong financial client references",
+                        "Reputation for compliance readiness"
+                        ],
+                    "Economies_of_Scale": [
+                        "Shared R&D costs across global clients",
+                        "Specialized financial services teams",
+                        "Extensive partner ecosystem"
+                        ],
+                    "Capital": [
+                        "Upfront compliance investment",
+                        "Infrastructure resilience",
+                        "Integration with legacy banking systems"
+                        ]
+                }
+            },
+            {
+                "industry_vertical_name": "Manufacturing",
+                "TAM": 10,
+                "Critical_success_category": {
+                    "Brand": [
+                        "Trusted vendor for factory automation"
+                        "Proven reliability in industrial workflows",
+                        "Reputation for minimizing downtime"
+                        ],
+                    "Economies_of_Scale": [
+                        "Global standardization lowers automation cost",
+                        "Shared R&D across manufacturing clients",
+                        "Bulk deployments reduce per-unit pricing"
+                        ],
+                    "Capital": [
+                        "Integration with robotics demands investment",
+                        "IoT infrastructure requires upfront funding",
+                        "Legacy system upgrades need capital"
+                        ]
+                    }
+                }
+            ]
+        }
     }
 
 def _fallback_swot() -> Dict[str, List[str]]:

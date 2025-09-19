@@ -228,6 +228,26 @@ def slide_exec_snapshot(prs: Presentation, bullets: List[str]):
     return slide
 
 
+def slide_ind(prs: Presentation, sw: Dict[str, List[str]]):
+    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    _add_heading(slide, "INDUSTRY ANALYSIS")
+    box_w = (W - 3*MARGIN) / 2
+    box_h = (H - 2*MARGIN - Inches(1.0)) / 2
+    x1, x2 = 0.5*MARGIN, 0.5*MARGIN + box_w + MARGIN
+    y1, y2 = Inches(1.5), Inches(1.5) + box_h + 0.5*MARGIN
+
+    def cell(title, items, x, y):
+        title_box = slide.shapes.add_textbox(x, y, box_w, Inches(0.35))
+        tf = title_box.text_frame; tf.clear(); p = tf.paragraphs[0]; r = p.add_run(); r.text = title; r.font.bold = True; r.font.size = Pt(16); r.font.color.rgb = COLOR_PRIMARY
+        _add_bullets(slide, x, y + Inches(0.4), box_w, box_h - Inches(0.4), items)
+
+    cell("Strengths", swot.get("S", []), x1, y1)
+    cell("Weaknesses", swot.get("W", []), x2, y1)
+    cell("Opportunities", swot.get("O", []), x1, y2)
+    cell("Threats", swot.get("T", []), x2, y2)
+    return slide
+
+
 def slide_swot(prs: Presentation, swot: Dict[str, List[str]]):
     slide = prs.slides.add_slide(prs.slide_layouts[5])
     _add_heading(slide, "SWOT")
@@ -393,6 +413,8 @@ def build_ppt_from_state(state: Dict[str, Any]) -> (BytesIO, str):
 
     # Executive Snapshot (basic heuristic based on SWOT + Ansoff presence)
     snapshot: List[str] = []
+    if results.get("ind"):
+        snapshot.append("Industry Analysis")
     swot = results.get("SWOT") or {}
     if any(swot.get(k) for k in ("S","W","O","T")):
         if swot.get("S"): snapshot.append(f"Strengths: {', '.join(swot['S'][:2])}")
@@ -405,6 +427,10 @@ def build_ppt_from_state(state: Dict[str, Any]) -> (BytesIO, str):
         snapshot.append(f"Top priority: {recs[0].get('title','First recommendation')}")
     slide_exec_snapshot(prs, snapshot[:6])
 
+    # Industry Analysis
+    if ind:
+        slide_ind(prs, ind)
+    
     # SWOT
     if swot:
         slide_swot(prs, swot)

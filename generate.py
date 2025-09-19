@@ -125,7 +125,7 @@ Product: {product}
 Geography: {geo or "unspecified"}
 Notes: {notes or ""}
 
-Return strict JSON. 
+Return strict JSON.
 
 You are given a JSON file of success factors:
 {json.dumps(success_factors, indent=2)}
@@ -141,12 +141,12 @@ Each item must include:
 
 
 Example schema:
-  {
+  {{
      "industries": [
-            {
+            {{
                 "industry_vertical_name": "Financial Services",
                 "TAM": 20,
-                "Critical_success_category": {
+                "Critical_success_category": {{
                     "Brand": [
                         "Trust with regulated clients",
                         "Strong financial client references",
@@ -162,12 +162,12 @@ Example schema:
                         "Infrastructure resilience",
                         "Integration with legacy banking systems"
                         ]
-                }
-            },
-            {
+                }}
+            }},
+            {{
                 "industry_vertical_name": "Manufacturing",
                 "TAM": 10,
-                "Critical_success_category": {
+                "Critical_success_category": {{
                     "Brand": [
                         "Trusted vendor for factory automation",
                         "Proven reliability in industrial workflows",
@@ -183,13 +183,12 @@ Example schema:
                         "IoT infrastructure requires upfront funding",
                         "Legacy system upgrades need capital"
                         ]
-                    }
-                }
+                    }}
+                }}
             ]
-        }
-}
+        }}
 """.strip()
-
+    
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
 Company: {company}
@@ -293,9 +292,8 @@ def _fallback_ind() -> Dict[str, List[str]]:
                 }
             ]
         }
-    }
 
-def _fallback_swot() -> Dict[str, List[str]]:
+def _fallback_ind() -> Dict[str, Any]:
     return {
         "S": [
             "Clear value proposition",

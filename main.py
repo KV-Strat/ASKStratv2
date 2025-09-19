@@ -254,7 +254,7 @@ elif st.session_state.step == 2:
             with tabs[idx]:
                 if name == "Industry Analysis":
                     st.write("Industry Analysis (read‑only preview). Add editing in Step 2.")
-                    st.dataframe(state["results"].get("ind", []), width="stretch")
+                    st.json(state["results"].get("ind", []), width="stretch")
                 
                 if name == "SWOT":
                     cols = st.columns(4)

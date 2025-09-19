@@ -169,7 +169,7 @@ Example schema:
                 "TAM": 10,
                 "Critical_success_category": {
                     "Brand": [
-                        "Trusted vendor for factory automation"
+                        "Trusted vendor for factory automation",
                         "Proven reliability in industrial workflows",
                         "Reputation for minimizing downtime"
                         ],
@@ -275,7 +275,7 @@ def _fallback_ind() -> Dict[str, List[str]]:
                 "TAM": 10,
                 "Critical_success_category": {
                     "Brand": [
-                        "Trusted vendor for factory automation"
+                        "Trusted vendor for factory automation",
                         "Proven reliability in industrial workflows",
                         "Reputation for minimizing downtime"
                         ],

@@ -121,8 +121,7 @@ def _industry_analysis_prompt(
     scope: str,
     product: str,
     notes: Optional[str],
-    geo: Optional[str],
-    success_factors: Dict[str, Any],
+    geo: Optional[str]: Dict[str, Any],
 ) -> str:
     try:
         with open("porter.json", "r") as f:

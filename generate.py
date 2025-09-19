@@ -127,7 +127,6 @@ def _industry_analysis_prompt(
         with open("porter.json", "r") as f:
             success_factors = json.load(f)
     except Exception:
-        st.write("porter file not found")
         success_factors = {}
     return f"""
 Company: {company}

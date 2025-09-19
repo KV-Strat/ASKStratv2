@@ -261,11 +261,10 @@ elif st.session_state.step == 2:
                     industries = raw if isinstance(raw, list) else raw.get("industries", [])
                     def first(lst):
                         return lst[0] if isinstance(lst, list) and lst else ""
-
                     def top_factor(cs, keys):
                         for k in keys:
                             if isinstance(cs, dict) and k in cs:
-                            return first(cs[k])
+                                return first(cs[k])
                     return ""
                     cols = {}
                     for item in industries[:5]:

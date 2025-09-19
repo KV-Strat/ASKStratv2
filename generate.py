@@ -114,8 +114,12 @@ Company: {company}
        Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
 
-with open("porter.json", "r") as f:
-    success_factors = json.load(f)
+try:
+    with open("porter.json", "r") as f:
+        success_factors = json.load(f)
+except Exception:
+    st.write("porter file not found")
+    success_factors = {}
 
 def _industry_analysis_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
     return f"""
@@ -132,8 +136,8 @@ You are given a JSON file of success factors:
 
 Task:
 1. List the top 5 industry verticals applicable to the Company, Scope, and Product. 
-2. From this JSON, boil down to 3 most critical success factor categories for the industry and scope
-3. Select the top 3 critical success factors in each category most relevant to the Company, Scope, and Product.
+2. From this JSON, boil down to 3 most important Critical_success_category for the industry and scope
+3. Select the top 3 success factors in each Critical_success_category most relevant to the Company, Scope, and Product.
 Each item must include:
 - "industry_vertical_name": a string with the vertical's name
 - "TAM": a number in billions (integer or float)
@@ -293,7 +297,7 @@ def _fallback_ind() -> Dict[str, List[str]]:
             ]
         }
 
-def _fallback_ind() -> Dict[str, Any]:
+def _fallback_swot() -> Dict[str, Any]:
     return {
         "S": [
             "Clear value proposition",
@@ -355,7 +359,7 @@ class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 
     # ---- Public API ----
-    def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> List[Dict[str, Union[str, float]]]:      
+    def generate_Industry_Analysis(self, company: str, scope: str, product: str, *, notes: Optional[str] = None, geo: Optional[str] = None) -> Dict[str, Any]:
         if self.provider:
             out = _extract_json(self.provider.complete(_GEN_SYS, _industry_analysis_prompt(company, scope, product, notes, geo)))
             #if isinstance(out, list):

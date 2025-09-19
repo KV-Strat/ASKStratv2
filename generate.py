@@ -114,83 +114,91 @@ Company: {company}
        Produce JSON with the key scope with an exact and concise 1-line description of the relevant business scope of the company.
         """.strip()
 
-try:
-    with open("porter.json", "r") as f:
-        success_factors = json.load(f)
-except Exception:
-    st.write("porter file not found")
-    success_factors = {}
 
-def _industry_analysis_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
+
+def _industry_analysis_prompt(
+    company: str,
+    scope: str,
+    product: str,
+    notes: Optional[str],
+    geo: Optional[str],
+    success_factors: Dict[str, Any],
+) -> str:
+    try:
+        with open("porter.json", "r") as f:
+            success_factors = json.load(f)
+    except Exception:
+        st.write("porter file not found")
+        success_factors = {}
     return f"""
 Company: {company}
-scope: {scope}
+Scope: {scope}
 Product: {product}
 Geography: {geo or "unspecified"}
 Notes: {notes or ""}
 
-Return strict JSON.
+Return strict JSON only. No prose, no markdown.
 
 You are given a JSON file of success factors:
 {json.dumps(success_factors, indent=2)}
 
 Task:
-1. List the top 5 industry verticals applicable to the Company, Scope, and Product. 
-2. From this JSON, boil down to 3 most important Critical_success_category for the industry and scope
-3. Select the top 3 success factors in each Critical_success_category most relevant to the Company, Scope, and Product.
-Each item must include:
-- "industry_vertical_name": a string with the vertical's name
-- "TAM": a number in billions (integer or float)
-- "Critical Success category" with the respective critical success factors. Limit to 5 words and make it contextual to scope and product
+1) List the top 5 industry verticals applicable to the Company, Scope, and Product (exactly 5).
+2) From the provided JSON, choose the 3 most important Critical_success_category for this context (exactly 3).
+3) For each chosen category, select the top 3 success factors (exactly 3 per category), each ≤5 words and contextual to the scope/product.
 
+Each industry item must include:
+- "industry_vertical_name": string
+- "TAM": number in billions (int or float)
+- "Critical_success_category": object with exactly 3 categories; each category has exactly 3 factors (strings ≤5 words)
 
 Example schema:
-  {{
-     "industries": [
-            {{
-                "industry_vertical_name": "Financial Services",
-                "TAM": 20,
-                "Critical_success_category": {{
-                    "Brand": [
-                        "Trust with regulated clients",
-                        "Strong financial client references",
-                        "Reputation for compliance readiness"
-                        ],
-                    "Economies_of_Scale": [
-                        "Shared R&D costs across global clients",
-                        "Specialized financial services teams",
-                        "Extensive partner ecosystem"
-                        ],
-                    "Capital": [
-                        "Upfront compliance investment",
-                        "Infrastructure resilience",
-                        "Integration with legacy banking systems"
-                        ]
-                }}
-            }},
-            {{
-                "industry_vertical_name": "Manufacturing",
-                "TAM": 10,
-                "Critical_success_category": {{
-                    "Brand": [
-                        "Trusted vendor for factory automation",
-                        "Proven reliability in industrial workflows",
-                        "Reputation for minimizing downtime"
-                        ],
-                    "Economies_of_Scale": [
-                        "Global standardization lowers automation cost",
-                        "Shared R&D across manufacturing clients",
-                        "Bulk deployments reduce per-unit pricing"
-                        ],
-                    "Capital": [
-                        "Integration with robotics demands investment",
-                        "IoT infrastructure requires upfront funding",
-                        "Legacy system upgrades need capital"
-                        ]
-                    }}
-                }}
-            ]
-        }}
+{{
+  "industries": [
+    {{
+      "industry_vertical_name": "Financial Services",
+      "TAM": 20,
+      "Critical_success_category": {{
+        "Brand": [
+          "Trust with regulated clients",
+          "Strong financial client references",
+          "Reputation for compliance readiness"
+        ],
+        "Economies_of_Scale": [
+          "Shared R&D costs across global clients",
+          "Specialized financial services teams",
+          "Extensive partner ecosystem"
+        ],
+        "Capital": [
+          "Upfront compliance investment",
+          "Infrastructure resilience",
+          "Integration with legacy banking systems"
+        ]
+      }}
+    }},
+    {{
+      "industry_vertical_name": "Manufacturing",
+      "TAM": 10,
+      "Critical_success_category": {{
+        "Brand": [
+          "Trusted vendor for factory automation",
+          "Proven reliability in industrial workflows",
+          "Reputation for minimizing downtime"
+        ],
+        "Economies_of_Scale": [
+          "Global standardization lowers automation cost",
+          "Shared R&D across manufacturing clients",
+          "Bulk deployments reduce per-unit pricing"
+        ],
+        "Capital": [
+          "Integration with robotics demands investment",
+          "IoT infrastructure requires upfront funding",
+          "Legacy system upgrades need capital"
+        ]
+      }}
+    }}
+  ]
+}}
 """.strip()
     
 def _swot_prompt(company: str, scope: str, product: str, notes: Optional[str], geo: Optional[str]) -> str:
@@ -343,18 +351,7 @@ def _fallback_benchmark(company: str, peers: List[str], caps: List[str]) -> Dict
 # ---------------------- Core Generator ----------------------
 
 @dataclass
-#class StrategyGeneratorscope:
-    #provider: Optional[LLMProvider] = None
 
-    # ---- Public API ----
-    
-    #def generate_scope(self, company: str -> Dict[str, List[str]]:
-        #if self.provider:
-            #out = self.provider.complete(_GEN_SYS, _compose_scope_prompt(company))
-                #return out
-        # fallback
-        #return "builds and sells robots"
-        
 class StrategyGenerator:
     provider: Optional[LLMProvider] = None
 

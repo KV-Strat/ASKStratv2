@@ -272,6 +272,7 @@ def ind_to_long_records(ind_raw):
                 })
     return records
 
+"""
 def slide_ind(prs, ind_raw):
     records = ind_to_long_records(ind_raw)
     lines=[]
@@ -291,7 +292,43 @@ def slide_ind(prs, ind_raw):
             p.font.name = "Courier New"   # columns line up better
             p.font.size = Pt(10)
     return slide
+"""
 
+def slide_ind(prs, ind_raw):
+    records = ind_to_long_records(ind_raw)
+    if not records:
+        return
+
+    # Get headers from first record
+    headers = list(records[0].keys())
+    rows, cols = len(records) + 1, len(headers)
+
+    # Add a blank slide
+    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    shapes = slide.shapes
+
+    # Add title
+    _add_heading(slide, "INDUSTRY ANALYSIS")
+
+    # Add table
+    table = shapes.add_table(rows, cols, Inches(0.5), Inches(1.0), Inches(9.0), Inches(5.0)).table
+
+    # Format headers
+    for col, header in enumerate(headers):
+        cell = table.cell(0, col)
+        cell.text = header
+        for p in cell.text_frame.paragraphs:
+            for r in p.runs:
+                r.font.bold = True
+                r.font.size = Pt(12)
+
+    # Fill rows
+    for row_idx, record in enumerate(records, start=1):
+        for col_idx, header in enumerate(headers):
+            table.cell(row_idx, col_idx).text = str(record.get(header, ""))
+
+    return slide
+ 
 def slide_swot(prs: Presentation, swot: Dict[str, List[str]]):
     slide = prs.slides.add_slide(prs.slide_layouts[5])
     _add_heading(slide, "SWOT")

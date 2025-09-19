@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime
 import os
 import streamlit as st
+import pandas as pd
 if "OPENAI_API_KEY" in st.secrets:
     os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 if "OPENAI_PROJECT" in st.secrets:  # optional
@@ -254,7 +255,34 @@ elif st.session_state.step == 2:
             with tabs[idx]:
                 if name == "Industry Analysis":
                     st.write("Industry Analysis (read‑only preview). Add editing in Step 2.")
-                    st.json(state["results"].get("ind", []), width="stretch")
+                    #st.json(state["results"].get("ind", []), width="stretch")
+                    raw = state["results"].get("ind", [])
+                    # Support either a list or {"industries": [...]}
+                    industries = raw if isinstance(raw, list) else raw.get("industries", [])
+                    def first(lst):
+                        return lst[0] if isinstance(lst, list) and lst else ""
+
+                    def top_factor(cs, keys):
+                        for k in keys:
+                            if isinstance(cs, dict) and k in cs:
+                            return first(cs[k])
+                    return ""
+                    cols = {}
+                    for item in industries[:5]:
+                        name = item.get("industry_vertical_name", "")
+                        cs = item.get("Critical_success_category") or item.get("Critical Success category") or {}
+                        cols[name] = [
+                            item.get("TAM", ""),
+                            top_factor(cs, ["Brand"]),
+                            top_factor(cs, ["Economies_of_Scale", "Economies of Scale"]),
+                            top_factor(cs, ["Capital"]),
+                            ]
+                    # Rows = metrics, Columns = industries
+                    df = pd.DataFrame(
+                        cols,
+                        index=["TAM (B$)", "Brand (top)", "Economies of Scale (top)", "Capital (top)"]
+                    )
+                    st.dataframe(df, use_container_width=True)
                 
                 if name == "SWOT":
                     cols = st.columns(4)

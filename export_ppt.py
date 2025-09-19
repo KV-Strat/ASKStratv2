@@ -227,24 +227,70 @@ def slide_exec_snapshot(prs: Presentation, bullets: List[str]):
     _add_bullets(slide, MARGIN, Inches(1.2), W - 2*MARGIN, Inches(5.0), bullets)
     return slide
 
+def _top_factor(cs: Dict[str, Any], keys: List[str]) -> str:
+    """Return the first factor for the first matching key (handles key variants)."""
+    for k in keys:
+        v = cs.get(k)
+        if isinstance(v, list) and v:
+            return _first(v)
+    return ""
 
-def slide_ind(prs: Presentation, sw: Dict[str, List[str]]):
+def slide_ind(prs: Presentation, ind: Dict[str, List[str]]):
     slide = prs.slides.add_slide(prs.slide_layouts[5])
     _add_heading(slide, "INDUSTRY ANALYSIS")
-    box_w = (W - 3*MARGIN) / 2
-    box_h = (H - 2*MARGIN - Inches(1.0)) / 2
-    x1, x2 = 0.5*MARGIN, 0.5*MARGIN + box_w + MARGIN
-    y1, y2 = Inches(1.5), Inches(1.5) + box_h + 0.5*MARGIN
+    metrics = ["TAM (B$)", "Brand (top)", "Economies of Scale (top)", "Capital (top)"]
+    rows = 1 + len(metrics)         # header row + metric rows
+    cols = 1 + len(ind)            # metric label col + one col per industry
+    # Title
+    title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.2), Inches(9), Inches(0.6))
+    ttf = title_box.text_frame
+    ttf.text = title
+    ttf.paragraphs[0].font.size = Pt(24)
+    ttf.paragraphs[0].font.bold = True
 
-    def cell(title, items, x, y):
-        title_box = slide.shapes.add_textbox(x, y, box_w, Inches(0.35))
-        tf = title_box.text_frame; tf.clear(); p = tf.paragraphs[0]; r = p.add_run(); r.text = title; r.font.bold = True; r.font.size = Pt(16); r.font.color.rgb = COLOR_PRIMARY
-        _add_bullets(slide, x, y + Inches(0.4), box_w, box_h - Inches(0.4), items)
+    # Table
+    table_shape = slide.shapes.add_table(
+        rows, cols, Inches(0.5), Inches(1.0), Inches(9.0), Inches(4.0)
+    )
+    table = table_shape.table
 
-    cell("Strengths", swot.get("S", []), x1, y1)
-    cell("Weaknesses", swot.get("W", []), x2, y1)
-    cell("Opportunities", swot.get("O", []), x1, y2)
-    cell("Threats", swot.get("T", []), x2, y2)
+    # Header row
+    table.cell(0, 0).text = "Metric"
+    for j, item in enumerate(inds, start=1):
+        table.cell(0, j).text = item.get("industry_vertical_name", "")
+
+    # Row labels
+    for i, metric in enumerate(metrics, start=1):
+        table.cell(i, 0).text = metric
+
+    # Data cells
+    for j, item in enumerate(inds, start=1):
+        cs = item.get("Critical_success_category") or item.get("Critical Success category") or {}
+        values = [
+            str(item.get("TAM", "")),
+            _top_factor(cs, ["Brand"]),
+            _top_factor(cs, ["Economies_of_Scale", "Economies of Scale"]),
+            _top_factor(cs, ["Capital"]),
+        ]
+        for i, val in enumerate(values, start=1):
+            cell = table.cell(i, j)
+            cell.text = val
+            tf = cell.text_frame
+            tf.word_wrap = True
+            for p in tf.paragraphs:
+                p.font.size = Pt(12)
+
+    # Style header row
+    for j in range(cols):
+        tf = table.cell(0, j).text_frame
+        for p in tf.paragraphs:
+            p.font.bold = True
+            p.font.size = Pt(12)
+
+    # Column widths
+    table.columns[0].width = Inches(2.2)
+    for j in range(1, cols):
+        table.columns[j].width = Inches(1.6)
     return slide
 
 

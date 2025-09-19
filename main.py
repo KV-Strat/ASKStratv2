@@ -314,14 +314,14 @@ elif st.session_state.step == 2:
                     with cols[1]:
                         md = st.text_area("Market Development", value=_list_to_text(an.get("market_development", [])), height=140)
                     with cols[2]:
-                        pd = st.text_area("Product Development", value=_list_to_text(an.get("product_development", [])), height=140)
+                        pdev = st.text_area("Product Development", value=_list_to_text(an.get("product_development", [])), height=140)
                     with cols[3]:
                         dv = st.text_area("Diversification", value=_list_to_text(an.get("diversification", [])), height=140)
                     if st.button("Save Ansoff edits", key="save_ansoff"):
                         state["results"]["Ansoff"] = {
                             "market_penetration": _text_to_list(mp),
                             "market_development": _text_to_list(md),
-                            "product_development": _text_to_list(pd),
+                            "product_development": _text_to_list(pdev),
                             "diversification": _text_to_list(dv),
                         }
                         st.toast("Ansoff saved.", icon="💾")

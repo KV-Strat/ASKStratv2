@@ -256,7 +256,7 @@ def slide_ind(prs: Presentation, ind: Dict[str, List[str]]):
 
     # Header row
     table.cell(0, 0).text = "Metric"
-    for j, item in enumerate(inds, start=1):
+    for j, item in enumerate(ind, start=1):
         table.cell(0, j).text = item.get("industry_vertical_name", "")
 
     # Row labels
@@ -264,7 +264,7 @@ def slide_ind(prs: Presentation, ind: Dict[str, List[str]]):
         table.cell(i, 0).text = metric
 
     # Data cells
-    for j, item in enumerate(inds, start=1):
+    for j, item in enumerate(ind, start=1):
         cs = item.get("Critical_success_category") or item.get("Critical Success category") or {}
         values = [
             str(item.get("TAM", "")),

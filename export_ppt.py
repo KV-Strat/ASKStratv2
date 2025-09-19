@@ -235,67 +235,57 @@ def _top_factor(cs: Dict[str, Any], keys: List[str]) -> str:
             return _first(v)
     return ""
 
-def slide_ind(prs: Presentation, ind: Dict[str, List[str]]):
-    # normalize to a list of dicts
-    inds = ind if isinstance(ind, list) else (ind.get("industries", []) if isinstance(ind, dict) else [])
+def slide_ind(prs, ind_raw):
+    # Normalize to a list of industry dicts
+    if isinstance(ind_raw, list):
+        inds = ind_raw
+    elif isinstance(ind_raw, dict):
+        inds = ind_raw.get("industries", [])
+    else:
+        inds = []
+
+    inds = inds[:5]  # cap to 5 industries
+
+    metrics = ["TAM (B$)", "Brand (top)", "Economies of Scale (top)", "Capital (top)"]
+    rows = 1 + len(metrics)          # header + metric rows
+    cols = 1 + len(inds)             # 'Metric' column + one per industry
 
     slide = prs.slides.add_slide(prs.slide_layouts[5])
-    _add_heading(slide, "INDUSTRY ANALYSIS")
-    metrics = ["TAM (B$)", "Brand (top)", "Economies of Scale (top)", "Capital (top)"]
-    rows = 1 + len(metrics)         # header row + metric rows
-    cols = 1 + len(ind)            # metric label col + one col per industry
-    # Title
-    #title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.2), Inches(9), Inches(0.6))
-    #ttf = title_box.text_frame
-    #ttf.text = title
-    #ttf.paragraphs[0].font.size = Pt(24)
-    #ttf.paragraphs[0].font.bold = True
+    _add_heading(slide, "Industry Analysis")
 
-    # Table
-    table_shape = slide.shapes.add_table(
-        rows, cols, Inches(0.5), Inches(1.0), Inches(9.0), Inches(4.0)
-    )
-    table = table_shape.table
+    # Make the table with the right dimensions
+    table = slide.shapes.add_table(rows, cols, Inches(0.5), Inches(1.0), Inches(9.0), Inches(4.0)).table
 
     # Header row
     table.cell(0, 0).text = "Metric"
     for j, item in enumerate(inds, start=1):
-        table.cell(0, j).text = item.get("industry_vertical_name", "")
+        if not isinstance(item, dict):
+            continue
+        table.cell(0, j).text = str(item.get("industry_vertical_name", ""))
 
     # Row labels
     for i, metric in enumerate(metrics, start=1):
         table.cell(i, 0).text = metric
 
-    # Data cells
+    # Fill cells
+    def first(lst): return lst[0] if isinstance(lst, list) and lst else ""
+    def top(cs, keys):
+        for k in keys:
+            v = cs.get(k)
+            if isinstance(v, list) and v:
+                return first(v)
+        return ""
+
     for j, item in enumerate(inds, start=1):
         cs = item.get("Critical_success_category") or item.get("Critical Success category") or {}
-        values = [
+        vals = [
             str(item.get("TAM", "")),
-            _top_factor(cs, ["Brand"]),
-            _top_factor(cs, ["Economies_of_Scale", "Economies of Scale"]),
-            _top_factor(cs, ["Capital"]),
+            top(cs, ["Brand"]),
+            top(cs, ["Economies_of_Scale", "Economies of Scale"]),
+            top(cs, ["Capital"]),
         ]
-        for i, val in enumerate(values, start=1):
-            cell = table.cell(i, j)
-            cell.text = val
-            tf = cell.text_frame
-            tf.word_wrap = True
-            for p in tf.paragraphs:
-                p.font.size = Pt(12)
-
-    # Style header row
-    for j in range(cols):
-        tf = table.cell(0, j).text_frame
-        for p in tf.paragraphs:
-            p.font.bold = True
-            p.font.size = Pt(12)
-
-    # Column widths
-    table.columns[0].width = Inches(2.2)
-    for j in range(1, cols):
-        table.columns[j].width = Inches(1.6)
-    return slide
-
+        for i, val in enumerate(vals, start=1):
+            table.cell(i, j).text = val
 
 def slide_swot(prs: Presentation, swot: Dict[str, List[str]]):
     slide = prs.slides.add_slide(prs.slide_layouts[5])
